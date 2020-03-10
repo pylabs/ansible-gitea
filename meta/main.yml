@@ -1,0 +1,19 @@
+galaxy_info:
+  role_name: gitea
+  author: William Wu
+  description: Install gitea system
+  company: PyLabs
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+  - name: Debian
+    versions:
+    - Buster
+    - 10
+  galaxy_tags:
+    - gitea
+    - debian
+dependencies:
+  - pylabs.nginx
+  - pylabs.mariadb
+  - pylabs.letsencrypt_auth
