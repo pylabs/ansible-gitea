@@ -23,16 +23,5 @@
       name: "gitea"
       state: "started"
       enabled: "yes"
-  - name: setup nginx
-    template:
-      src: "nginx.j2"
-      dest: "/etc/nginx/sites-available/{{ gitea_domain_name }}"
-      owner: "root"
-      group: "root"
-      mode: "0644"
-  - name: reload nginx
-    systemd:
-      name: "nginx"
-      state: "reloaded"
   tags:
     - gitea

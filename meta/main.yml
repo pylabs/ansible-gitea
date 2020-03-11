@@ -14,6 +14,4 @@ galaxy_info:
     - gitea
     - debian
 dependencies:
-  - pylabs.nginx
   - pylabs.mariadb
-  - pylabs.letsencrypt_auth

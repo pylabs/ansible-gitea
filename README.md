@@ -8,7 +8,6 @@ Role Variables
 
 ```yaml
 gitea_version: GITEA_VERSION_NUMBER
-gitea_domain_name: GITEA_DOMAIN_NAME
 ```
 
 Example Playbook
@@ -20,7 +19,6 @@ Example Playbook
      - role: pylabs.gitea
   vars:
      gitea_version: "1.10.2"
-     gitea_domain_name: "gitea.example.com"
 ```
 
 License
