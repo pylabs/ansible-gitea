@@ -50,15 +50,18 @@
       mode: "0770"
   - name: create gitea db
     mysql_db:
+      login_unix_socket: "/var/run/mysqld/mysqld.sock"
       name: "{{ gitea_db_name }}"
       encoding: "utf8mb4"
       state: "present"
   - name: create gitea db account
     mysql_user:
+      login_unix_socket: "/var/run/mysqld/mysqld.sock"
       name: "{{ gitea_db_user }}"
       password: "{{ gitea_db_password }}"
       priv: "{{ gitea_db_name}}.*:ALL"
       state: "present"
+    no_log: "yes"
   - name: install systemd service
     copy:
       src: "gitea.service"
