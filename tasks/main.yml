@@ -9,7 +9,7 @@
       dest: "/usr/local/bin/gitea"                                                                                                 
       mode: "0755"
   - name: setup gitea environment
-    script: "setup_gitea_env.sh"
+    script: "setup_gitea_env.sh '{{ gitea_db_user }}' '{{ gitea_db_password }}' '{{ gitea_db_name }}'"
   - name: install systemd service
     copy:
       src: "gitea.service"
