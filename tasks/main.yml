@@ -1,15 +1,64 @@
 ---
 - block:
-  - name: install git package
+  - name: install git and pymysql packages
     apt:
-      name: "git"
-  - name: fetch gitea binary                                                                                                       
-    get_url:                                                                                                                       
-      url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"                                                               
-      dest: "/usr/local/bin/gitea"                                                                                                 
+      name:
+        - git
+        - python-pymysql
+  - name: fetch gitea binary
+    get_url:
+      url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
+      dest: "/usr/local/bin/gitea"
       mode: "0755"
-  - name: setup gitea environment
-    script: "setup_gitea_env.sh '{{ gitea_db_user }}' '{{ gitea_db_password }}' '{{ gitea_db_name }}'"
+  - name: create gitea user group
+    group:
+      name: git
+      state: present
+  - name: create gitea user account
+    user:
+      name: git
+      password: "*"
+      system: yes
+      home: /home/git
+      shell: /bin/bash
+      groups: git
+      state: present
+  - name: create gitea meta data dir
+    file:
+      path: /var/lib/gitea
+      state: directory
+      owner: git
+      group: git
+      mode: "0750"
+  - name: create gitea meta data subdir
+    file:
+      path: "/var/lib/gitea/{{ item }}"
+      state: directory
+      owner: git
+      group: git
+      mode: "0750"
+    loop:
+      - custom
+      - data
+      - log
+  - name: create gitea config dir
+    file:
+      path: "/etc/gitea"
+      state: directory
+      owner: "root"
+      group: "git"
+      mode: "0770"
+  - name: create gitea db
+    mysql_db:
+      name: "{{ gitea_db_name }}"
+      encoding: "utf8mb4"
+      state: "present"
+  - name: create gitea db account
+    mysql_user:
+      name: "{{ gitea_db_user }}"
+      password: "{{ gitea_db_password }}"
+      priv: "{{ gitea_db_name}}.*:ALL"
+      state: "present"
   - name: install systemd service
     copy:
       src: "gitea.service"
