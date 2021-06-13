@@ -1,21 +1,21 @@
 ---
 - block:
   - name: install git and pymysql packages
-    apt:
+    ansible.builtin.apt:
       name:
         - git
         - python-pymysql
   - name: fetch gitea binary
-    get_url:
+    ansible.builtin.get_url:
       url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-amd64"
       dest: "/usr/local/bin/gitea"
       mode: "0755"
   - name: create gitea user group
-    group:
+    ansible.builtin.group:
       name: git
       state: present
   - name: create gitea user account
-    user:
+    ansible.builtin.user:
       name: git
       password: "*"
       system: yes
@@ -24,14 +24,14 @@
       groups: git
       state: present
   - name: create gitea meta data dir
-    file:
+    ansible.builtin.file:
       path: /var/lib/gitea
       state: directory
       owner: git
       group: git
       mode: "0750"
   - name: create gitea meta data subdir
-    file:
+    ansible.builtin.file:
       path: "/var/lib/gitea/{{ item }}"
       state: directory
       owner: git
@@ -42,20 +42,20 @@
       - data
       - log
   - name: create gitea config dir
-    file:
+    ansible.builtin.file:
       path: "/etc/gitea"
       state: directory
       owner: "root"
       group: "git"
       mode: "0770"
   - name: create gitea db
-    mysql_db:
+    ansible.builtin.mysql_db:
       login_unix_socket: "/var/run/mysqld/mysqld.sock"
       name: "{{ gitea_db_name }}"
       encoding: "utf8mb4"
       state: "present"
   - name: create gitea db account
-    mysql_user:
+    ansible.builtin.mysql_user:
       login_unix_socket: "/var/run/mysqld/mysqld.sock"
       name: "{{ gitea_db_user }}"
       password: "{{ gitea_db_password }}"
@@ -63,27 +63,27 @@
       state: "present"
     no_log: "yes"
   - name: install systemd service
-    copy:
+    ansible.builtin.copy:
       src: "gitea.service"
       dest: "/etc/systemd/system/gitea.service"
       owner: "root"
       group: "root"
       mode: "0644"
   - name: enable and start gitea service
-    systemd:
+    ansible.builtin.systemd:
       daemon_reload: "yes"
       name: "gitea"
       state: "started"
       enabled: "yes"
   - name: setup nginx config
-    template:
+    ansible.builtin.template:
       src: "nginx.j2"
       dest: "/etc/nginx/sites-available/{{ gitea_domain_name }}"
       owner: "root"
       group: "root"
       mode: "0644"
   - name: restart nginx
-    systemd:
+    ansible.builtin.systemd:
       name: "nginx.service"
       state: "restarted"
   tags:
